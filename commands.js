@@ -17,11 +17,10 @@ var request = require('request');
 //   ] 
 // }
 // // returns "ultitest"
-// obj.accessByString('one[0].two[1].three'); 
+// accessByString(obj, 'one[0].two[1].three'); 
 // 
 // from http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
-Object.prototype.accessByString = function(str) {
-    var obj = this;
+var accessByString = function(obj, str) {
     str = str.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
     str = str.replace(/^\./, '');           // strip a leading dot
     var ary = str.split('.');
@@ -45,7 +44,7 @@ var promiseUrl = function(url, property) {
     request({ url: url }, function(error, response, body) {
         if (!error && response.statusCode == 200) {
             body = JSON.parse(body);
-            deferred.resolve(body.accessByString(property));
+            deferred.resolve(accessByString(body, property));
         }
     });
 

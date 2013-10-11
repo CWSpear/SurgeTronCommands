@@ -67,7 +67,7 @@ var promiseUrl = function(url, property) {
 // 
 // if a keywords property exists, it will search the entire
 // message for that work and trigger the message if one of
-// those keywords were found (first one found wins)
+// those keywords were found (first command matched wins)
 // 
 // the "note" property is what's printed in the !help command
 // 
@@ -105,6 +105,15 @@ var commands = {
         note: "It's <em>really</em> Hammer Time! (2 params)",
         author: 'CWSpear'
     },
+    // could bring this back if you could sanitize it to be safe! haha
+    // eval: {
+    //     message: function() {
+    //         var args = Array.prototype.slice.call(arguments);
+    //         return eval(args.join(' '));
+    //     },
+    //     note: "Eval is evil!",
+    //     author: 'CWSpear'
+    // },
     dirty: {
         keywords: ['hard', 'fast', 'quick'],
         message: "That's what she said!",
@@ -116,6 +125,15 @@ var commands = {
         message: "Test <em>this!</em>",
         note: "Need something to test?",
         author: 'CWSpear'        
+    },
+    weather: {
+        message: function() {
+            var args = Array.prototype.slice.call(arguments);
+            var arg = args.join(' ');
+            return promiseUrl('http://api.openweathermap.org/data/2.5/weather?q=' + arg, 'weather[0].description');
+        },
+        note: "Find out the weather in a city, state (i.e. pass in Spokane, WA).",
+        author: 'CWSpear'
     },
     excuse: {
         message: function() {

@@ -1,6 +1,13 @@
 var _ = require('underscore');
 var Q = require('Q');
 var request = require('request');
+var util = require('util');
+var bamboo = require('../bamboo.js');
+
+// helper to log an obj
+var logObj = function(obj, depth) {
+    console.log(util.inspect(obj, { colors:true, depth: depth || 2 }));
+};
 
 // i.e. 
 // var obj = { 
@@ -67,7 +74,10 @@ var promiseUrl = function(url, property) {
 // 
 // if a keywords property exists, it will search the entire
 // message for that work and trigger the message if one of
-// those keywords were found (first command matched wins)
+// those keywords were found (first command matched wins).
+// keywords are matched against the following (where
+// "text" is the body of the last message sent):
+// _.uniq(text.toLowerCase().replace(/[^a-z0-9 ]+/g, '').split(' '))
 // 
 // the "note" property is what's printed in the !help command
 // 
@@ -120,8 +130,44 @@ var commands = {
         note: "That's what she said!",
         author: 'CWSpear'        
     },
+    build: {
+        message: function(planName) {
+            // contact CWSpear to add plans
+            var plans = bamboo.plans;
+
+            var action = 'queue';
+
+            if(!(plan = plans[planName])) return 'Invalid Plan: "' + planName + '" (plans must be preconfigured)';
+
+            var url = bamboo.api + action + '/' + [plan.projectKey, plan.buildKey].join('-');
+            var deferred = Q.defer();
+
+            var r = request.post({
+                url: url,
+                json: true,
+                qs: {
+                    os_authType: 'basic'
+                },
+                auth: {
+                    user: bamboo.username,
+                    pass: bamboo.password,
+                    sendImmediately: true
+                }
+            }, function(error, response, result) {
+                if (!error && response.statusCode == 200) {
+                    deferred.resolve([result.planKey, '#' + result.buildNumber, 'passed.', result.triggerReason, 'by <em>me</em>.'].join(' '));
+                } else {
+                    deferred.resolve('[' + response.statusCode + '] There was an error!');
+                }
+            });
+
+            return deferred.promise;
+        },
+        note: "Perform a build on Bamboo (must be preconfigured)",
+        author: 'CWSpear'
+    },
     test: {
-        keywords: ['test'],
+        // keywords: ['test'],
         message: "Test <em>this!</em>",
         note: "Need something to test?",
         author: 'CWSpear'        

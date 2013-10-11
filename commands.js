@@ -48,9 +48,9 @@ var accessByString = function(obj, str) {
 var promiseUrl = function(url, property) {
     var deferred = Q.defer();
 
-    request({ url: url }, function(error, response, body) {
+    request({ url: url, json: true }, function(error, response, body) {
         if (!error && response.statusCode == 200) {
-            body = JSON.parse(body);
+            if(typeof body == 'string') body = JSON.parse(body);
             deferred.resolve(accessByString(body, property));
         }
     });
@@ -187,16 +187,17 @@ var commands = {
         },
         note: "Outputs an excuse that a developer might use.",
         author: 'CWSpear'
-    },
-    calc: {
-        message: function() {
-            var args = Array.prototype.slice.call(arguments);
-            var arg = encodeURIComponent(args.join(' '));
-            return promiseUrl('https://www.google.com/ig/calculator?q=' + arg, 'rhs');
-        },
-        note: 'Performs arbitrary numerical calculations.',
-        author: 'JFrancis'
     }
+    //, calc: {
+    //     message: function() {
+    //         var args = Array.prototype.slice.call(arguments);
+    //         var arg = encodeURIComponent(args.join(' '));
+    //         console.log(arg);
+    //         return promiseUrl('https://www.google.com/ig/calculator?q=' + arg, 'rhs');
+    //     },
+    //     note: 'Performs arbitrary numerical calculations.',
+    //     author: 'JFrancis'
+    // }
 };
 
 module.exports = commands;

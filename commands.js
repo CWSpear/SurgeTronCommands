@@ -60,6 +60,11 @@ var promiseUrl = function(url, property) {
 // argument when resolved is a string, or it can
 // return a string directly
 // 
+// some HTML is allowed
+// 
+// you can pass in parameters if message is a function
+// (see hammertime2 as an example)
+// 
 // if a keywords property exists, it will search the entire
 // message for that work and trigger the message if one of
 // those keywords were found (first one found wins)
@@ -89,6 +94,15 @@ var commands = {
     hammertime: {
         message: '━━▊ ━━▊ ━━▊',
         note: "It's Hammer Time!",
+        author: 'CWSpear'
+    },
+    // !hammertime2 Cameron Spear
+    // name1 will be "Cameron", name2 will be "Spear"
+    hammertime2: {
+        message: function(name1, name2) {
+            return name1 + ' ━━▊ ━━▊ ━━▊ ' + name2;
+        },
+        note: "It's <em>really</em> Hammer Time! (2 params)",
         author: 'CWSpear'
     },
     dirty: {

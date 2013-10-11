@@ -187,6 +187,15 @@ var commands = {
         },
         note: "Outputs an excuse that a developer might use.",
         author: 'CWSpear'
+    },
+    calc: {
+        message: function() {
+            var args = Array.prototype.slice.call(arguments);
+            var arg = encodeURIComponent(args.join(' '));
+            return promiseUrl('https://www.google.com/ig/calculator?q=' + arg, 'rhs');
+        },
+        note: 'Performs arbitrary numerical calculations.',
+        author: 'JFrancis'
     }
 };
 

@@ -50,7 +50,7 @@ var promiseUrl = function(url, property, prefix, postfix) {
 
     request({ url: url, json: true }, function(error, response, body) {
         if (!error && response.statusCode == 200) {
-            if(typeof body == 'string') body = JSON.parse(body);
+            // if(typeof body == 'string') body = JSON.parse(body);
             var result = property === null ? body : accessByString(body, property);
             result = (prefix || '') + result + (postfix || ''); 
             deferred.resolve(result);
@@ -196,8 +196,9 @@ var commands = {
     calc: {
         message: function() {
             var args = Array.prototype.slice.call(arguments);
-            var arg = encodeURIComponent(args.join(' '));
-            return promiseUrl('http://www.calcatraz.com/calculator/api?c=' + arg, null, args + ' = ');
+            var str = args.join(' ');
+            var arg = encodeURIComponent(str);
+            return promiseUrl('http://www.calcatraz.com/calculator/api?c=' + arg, null, str + ' = ');
         },
         note: 'Performs arbitrary numerical calculations.',
         author: 'JFrancis'

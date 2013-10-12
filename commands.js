@@ -96,6 +96,9 @@ var commands = {
                 if(command.keywords) str += ' (keywords: [' + command.keywords.join(', ') + '])';
                 ts.push(str);
             });
+
+            ts.push('<br>Please contribute commands on <a href="https://github.com/CWSpear/SurgeTronCommands/">GitHub</a>');
+
             return ts.join('<br>');
         },
         note: "Outputs help message.",

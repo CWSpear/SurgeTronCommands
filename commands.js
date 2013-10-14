@@ -3,62 +3,7 @@ var Q = require('Q');
 var request = require('request');
 var util = require('util');
 var bamboo = require('../bamboo.js');
-
-// helper to log an obj
-var logObj = function(obj, depth) {
-    console.log(util.inspect(obj, { colors:true, depth: depth || 2 }));
-};
-
-// i.e. 
-// var obj = { 
-//   message: 'test', 
-//   one: [
-//     { 
-//       two: [
-//         'dummy', 
-//         { 
-//           three: 'ultitest' 
-//         }
-//       ] 
-//     }
-//   ] 
-// }
-// // returns "ultitest"
-// accessByString(obj, 'one[0].two[1].three'); 
-// 
-// from http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
-var accessByString = function(obj, str) {
-    str = str.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-    str = str.replace(/^\./, '');           // strip a leading dot
-    var ary = str.split('.');
-    while (ary.length) {
-        var part = ary.shift();
-        if (part in obj) {
-            obj = obj[part];
-        } else {
-            return; // undefined
-        }
-    }
-    return obj;
-};
-
-// simple helper function to quickly query a URL
-// property can be a string representation of the property you want to access:
-// i.e. 'one[0].two[1].three' (see Object.prototype.accessByString comment)
-var promiseUrl = function(url, property, prefix, postfix) {
-    var deferred = Q.defer();
-
-    request({ url: url, json: true }, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            // if(typeof body == 'string') body = JSON.parse(body);
-            var result = property === null ? body : accessByString(body, property);
-            result = (prefix || '') + result + (postfix || ''); 
-            deferred.resolve(result);
-        }
-    });
-
-    return deferred.promise;
-};
+var helper = require('./helper.js');
 
 // and now the commands
 // the key is the command word used to trigger.
@@ -137,6 +82,8 @@ var commands = {
     },
     build: {
         message: function(planName) {
+            planName = (planName + '').toLowerCase();
+
             // contact CWSpear to add plans
             var plans = bamboo.plans;
 
@@ -181,14 +128,14 @@ var commands = {
         message: function() {
             var args = Array.prototype.slice.call(arguments);
             var arg = args.join(' ');
-            return promiseUrl('http://api.openweathermap.org/data/2.5/weather?q=' + arg, 'weather[0].description');
+            return helper.promiseUrl('http://api.openweathermap.org/data/2.5/weather?q=' + arg, 'weather[0].description');
         },
         note: "Find out the weather in a city, state (i.e. pass in Spokane, WA).",
         author: 'CWSpear'
     },
     excuse: {
         message: function() {
-            return promiseUrl('http://clintorion.com/cgi-bin/excuses.py', 'message');
+            return helper.promiseUrl('http://clintorion.com/cgi-bin/excuses.py', 'message');
         },
         note: "Outputs an excuse that a developer might use.",
         author: 'CWSpear'
@@ -198,7 +145,7 @@ var commands = {
             var args = Array.prototype.slice.call(arguments);
             var str = args.join(' ');
             var arg = encodeURIComponent(str);
-            return promiseUrl('http://www.calcatraz.com/calculator/api?c=' + arg, null, str + ' = ');
+            return helper.promiseUrl('http://www.calcatraz.com/calculator/api?c=' + arg, null, str + ' = ');
         },
         note: 'Performs arbitrary numerical calculations.',
         author: 'JFrancis'

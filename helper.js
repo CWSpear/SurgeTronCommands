@@ -1,10 +1,17 @@
 var Q = require('Q');
 var request = require('request');
+var util = require('util');
 
 var helper = {
     // helper to log an obj
-    logObj: function(obj, depth) {
+    log: function(obj, depth) {
         console.log(util.inspect(obj, { colors:true, depth: depth || 2 }));
+    },
+
+    promisize: function(message) {
+        var deferred = Q.defer();
+        deferred.resolve(message);
+        return deferred.promise;
     },
 
     // i.e. 

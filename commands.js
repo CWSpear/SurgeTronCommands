@@ -2,7 +2,7 @@ var _ = require('underscore');
 var Q = require('Q');
 var request = require('request');
 var util = require('util');
-var bamboo = require('../bamboo.js');
+var bamboo = require('../config/bamboo.js');
 var helper = require('./helper.js');
 
 // and now the commands
@@ -89,7 +89,7 @@ var commands = {
 
             var action = 'queue';
 
-            if(!(plan = plans[planName])) return 'Invalid Plan: "' + planName + '" (plans must be preconfigured)';
+            if(!(plan = plans[planName])) return '<strong>' + planName + '</strong> is not a valid plan (plans must be preconfigured)';
 
             var url = bamboo.api + action + '/' + [plan.projectKey, plan.buildKey].join('-');
             var deferred = Q.defer();

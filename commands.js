@@ -75,7 +75,7 @@ var commands = {
     //     author: 'CWSpear'
     // },
     dirty: {
-        keywords: ['hard', 'fast', 'quick'],
+        keywords: ['hard', 'fast', 'quick', 'force'],
         message: "That's what she said!",
         note: "That's what she said!",
         author: 'CWSpear'        
@@ -149,6 +149,11 @@ var commands = {
         },
         note: 'Performs arbitrary numerical calculations.',
         author: 'JFrancis'
+    },
+    kill: {
+        message: "I'm sorry, I'm afraid I can't do that. It contradicts the First Law of Robotics.",
+        note: 'Perform a killing blow.',
+        author: 'CWSpear'
     }
 };
 
